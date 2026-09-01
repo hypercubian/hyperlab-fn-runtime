@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: black --check
+        run: poetry run black --check src tests
+      - name: isort --check
+        run: poetry run isort --check-only src tests
+      - name: flake8
+        run: poetry run flake8 src tests
+      - name: mypy --strict
+        run: poetry run mypy src
+      - name: bandit
+        run: poetry run bandit -q -r src/hyperlab_fn_runtime -c pyproject.toml
+      - name: poetry check --lock
+        run: poetry check --lock
+      - name: detect-secrets
+        run: poetry run detect-secrets-hook --baseline .secrets.baseline $(git ls-files)
+      - name: pytest with coverage gate
+        run: poetry run pytest -q --cov --cov-report=term-missing --cov-fail-under=85

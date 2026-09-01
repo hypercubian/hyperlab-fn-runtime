@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503, D105, D107
+docstring-convention = pep257
+per-file-ignores =
+    tests/*: D100, D101, D102, D103, D104
+    src/hyperlab_fn_runtime/__init__.py: D104
+exclude = .git, .venv, dist, build
