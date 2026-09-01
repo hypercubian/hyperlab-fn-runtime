@@ -6,6 +6,7 @@ authors = ["Babak Takand <takandb@gmail.com>"]
 readme = "README.md"
 license = "MIT"
 packages = [{ include = "hyperlab_fn_runtime", from = "src" }]
+include = [{ path = "src/hyperlab_fn_runtime/py.typed", format = ["sdist", "wheel"] }]
 
 [tool.poetry.dependencies]
 python = "^3.11"

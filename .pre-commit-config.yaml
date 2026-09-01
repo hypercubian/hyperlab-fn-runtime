@@ -1,0 +1,44 @@
+default_install_hook_types: [pre-commit, pre-push]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: debug-statements
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        entry: poetry run flake8 src tests
+        language: system
+        pass_filenames: false
+      - id: mypy
+        name: mypy --strict (pre-push)
+        entry: poetry run mypy src
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+      - id: pytest
+        name: unit tests (pre-push)
+        entry: poetry run pytest -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
